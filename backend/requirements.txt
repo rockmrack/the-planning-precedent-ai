@@ -77,3 +77,21 @@ slowapi==0.1.9
 
 # UK Specific
 uk-postcode-utils==1.1.0
+
+# WebSocket Support
+websockets==12.0
+python-socketio==5.11.0
+
+# NLP and Text Analysis
+spacy==3.7.4
+nltk==3.8.1
+
+# Machine Learning (for predictions)
+scikit-learn==1.4.0
+
+# Geospatial
+geopy==2.4.1
+
+# Email (for notifications)
+emails==0.6
+aiosmtplib==3.0.1
