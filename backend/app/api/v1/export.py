@@ -175,10 +175,13 @@ async def export_appeal_statement(
 async def _generate_pdf_report(request: ExportRequest, db: SupabaseDB) -> bytes:
     """Generate PDF report from analysis"""
     from weasyprint import HTML
-    from jinja2 import Template
+    from jinja2 import Environment, BaseLoader, select_autoescape
+
+    # Create environment with autoescape enabled for XSS protection
+    env = Environment(loader=BaseLoader(), autoescape=select_autoescape(['html', 'xml']))
 
     # HTML template for the report
-    template = Template("""
+    template = env.from_string("""
 <!DOCTYPE html>
 <html>
 <head>
@@ -329,6 +332,7 @@ async def _generate_pdf_report(request: ExportRequest, db: SupabaseDB) -> bytes:
     """)
 
     # Prepare data (in production, this would come from stored analysis)
+    # Note: All user inputs are automatically escaped by Jinja2 autoescape
     html_content = template.render(
         generated_date=datetime.utcnow().strftime("%d %B %Y"),
         site_address=request.site_address,
@@ -349,9 +353,12 @@ async def _generate_pdf_report(request: ExportRequest, db: SupabaseDB) -> bytes:
 async def _generate_precedent_pdf(cases: list) -> bytes:
     """Generate PDF listing precedent cases"""
     from weasyprint import HTML
-    from jinja2 import Template
+    from jinja2 import Environment, BaseLoader, select_autoescape
 
-    template = Template("""
+    # Create environment with autoescape enabled for XSS protection
+    env = Environment(loader=BaseLoader(), autoescape=select_autoescape(['html', 'xml']))
+
+    template = env.from_string("""
 <!DOCTYPE html>
 <html>
 <head>
@@ -390,17 +397,20 @@ async def _generate_precedent_pdf(cases: list) -> bytes:
 
 
 def _generate_precedent_html(cases: list) -> str:
-    """Generate HTML listing precedent cases"""
+    """Generate HTML listing precedent cases with proper XSS protection"""
+    from html import escape
+    
     html = ["<html><body><h1>Planning Precedent Cases</h1>"]
 
     for case in cases:
+        # Escape all user-provided content to prevent XSS attacks
         html.append(f"""
         <div style="border: 1px solid #ddd; padding: 15px; margin: 15px 0;">
-            <h3>{case.case_reference}</h3>
-            <p><strong>Address:</strong> {case.address}</p>
-            <p><strong>Decision:</strong> {case.outcome.value}</p>
-            <p><strong>Date:</strong> {case.decision_date}</p>
-            <p><strong>Description:</strong> {case.description}</p>
+            <h3>{escape(str(case.case_reference))}</h3>
+            <p><strong>Address:</strong> {escape(str(case.address))}</p>
+            <p><strong>Decision:</strong> {escape(str(case.outcome.value))}</p>
+            <p><strong>Date:</strong> {escape(str(case.decision_date))}</p>
+            <p><strong>Description:</strong> {escape(str(case.description))}</p>
         </div>
         """)
 
@@ -417,9 +427,12 @@ async def _generate_appeal_statement(
 ) -> bytes:
     """Generate appeal statement PDF"""
     from weasyprint import HTML
-    from jinja2 import Template
+    from jinja2 import Environment, BaseLoader, select_autoescape
 
-    template = Template("""
+    # Create environment with autoescape enabled for XSS protection
+    env = Environment(loader=BaseLoader(), autoescape=select_autoescape(['html', 'xml']))
+
+    template = env.from_string("""
 <!DOCTYPE html>
 <html>
 <head>

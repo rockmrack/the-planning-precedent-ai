@@ -94,6 +94,35 @@ class Settings(BaseSettings):
     uk_timezone: str = "Europe/London"
     date_format: str = "%d/%m/%Y"
 
+    @field_validator('app_env')
+    @classmethod
+    def validate_app_env(cls, v: str) -> str:
+        """Validate app_env is a known environment"""
+        allowed = ['development', 'staging', 'production', 'test']
+        if v.lower() not in allowed:
+            raise ValueError(f'app_env must be one of: {allowed}')
+        return v.lower()
+
+    @field_validator('cors_origins')
+    @classmethod
+    def validate_cors_origins(cls, v: str) -> str:
+        """Validate CORS origins are valid URLs"""
+        import re
+        origins = [o.strip() for o in v.split(',')]
+        url_pattern = re.compile(r'^https?://[^\s/$.?#].[^\s]*$')
+        for origin in origins:
+            if origin != '*' and not url_pattern.match(origin):
+                raise ValueError(f'Invalid CORS origin URL: {origin}')
+        return v
+
+    @field_validator('openai_temperature')
+    @classmethod
+    def validate_temperature(cls, v: float) -> float:
+        """Validate temperature is within valid range"""
+        if not 0.0 <= v <= 2.0:
+            raise ValueError('openai_temperature must be between 0.0 and 2.0')
+        return v
+
     @property
     def cors_origins_list(self) -> List[str]:
         """Parse CORS origins from comma-separated string"""

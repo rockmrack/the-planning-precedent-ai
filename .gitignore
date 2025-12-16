@@ -116,3 +116,6 @@ typings/
 # Supabase
 supabase/.branches
 supabase/.temp
+
+# Snyk Security Extension - AI Rules (auto-generated)
+.github/instructions/snyk_rules.instructions.md

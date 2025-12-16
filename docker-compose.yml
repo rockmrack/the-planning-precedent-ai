@@ -157,6 +157,16 @@ volumes:
   redis-data:
   scraper-data:
 
+# Docker secrets for sensitive data (production use)
+secrets:
+  db_password:
+    external: true
+  api_key:
+    external: true
+
 networks:
   planning-network:
     driver: bridge
+    # Enable encryption for inter-container communication
+    driver_opts:
+      encrypted: "true"

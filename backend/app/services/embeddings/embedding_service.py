@@ -395,8 +395,8 @@ class EmbeddingService:
         return overlap
 
     def _get_cache_key(self, text: str) -> str:
-        """Generate a cache key for text"""
-        return hashlib.md5(text.encode()).hexdigest()
+        """Generate a cache key for text using SHA256 (secure hash)"""
+        return hashlib.sha256(text.encode()).hexdigest()
 
     async def embed_chunks(
         self,
