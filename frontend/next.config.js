@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  basePath: '/approval-check',
   reactStrictMode: true,
   images: {
     domains: ['camdocs.camden.gov.uk'],
