@@ -203,8 +203,16 @@ export async function cacheSearchResults(query: string, results: any[]): Promise
     timestamp: Date.now()
   });
 
-  await tx.complete;
-  db.close();
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+    tx.onerror = () => {
+      db.close();
+      reject(tx.error);
+    };
+  });
 }
 
 // Get cached search results
@@ -240,11 +248,18 @@ export async function queueOfflineAction(type: string, data: any): Promise<void>
     timestamp: Date.now()
   });
 
-  await tx.complete;
-  db.close();
-
-  // Request background sync
-  await requestBackgroundSync(`sync-${type}`);
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = async () => {
+      db.close();
+      // Request background sync
+      await requestBackgroundSync(`sync-${type}`);
+      resolve();
+    };
+    tx.onerror = () => {
+      db.close();
+      reject(tx.error);
+    };
+  });
 }
 
 // Save case for offline access
@@ -258,8 +273,16 @@ export async function saveCaseOffline(caseData: any): Promise<void> {
     savedAt: Date.now()
   });
 
-  await tx.complete;
-  db.close();
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+    tx.onerror = () => {
+      db.close();
+      reject(tx.error);
+    };
+  });
 }
 
 // Get offline saved cases
