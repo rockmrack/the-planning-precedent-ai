@@ -1,0 +1,13 @@
+backend/
+database/
+.git/
+.github/
+*.md
+.env
+.env.local
+*.pyc
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+node_modules/
