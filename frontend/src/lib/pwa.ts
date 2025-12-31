@@ -141,7 +141,7 @@ export async function subscribeToPush(vapidPublicKey: string): Promise<PushSubsc
 }
 
 // Convert VAPID key to Uint8Array
-function urlBase64ToUint8Array(base64String: string): Uint8Array {
+function urlBase64ToUint8Array(base64String: string): BufferSource {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding)
     .replace(/-/g, '+')
@@ -154,7 +154,7 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
     outputArray[i] = rawData.charCodeAt(i);
   }
 
-  return outputArray;
+  return outputArray as BufferSource;
 }
 
 // IndexedDB for offline storage
