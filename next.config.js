@@ -4,6 +4,7 @@ const nextConfig = {
   images: {
     domains: ['camdocs.camden.gov.uk'],
   },
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
   async rewrites() {
     return [
       {
