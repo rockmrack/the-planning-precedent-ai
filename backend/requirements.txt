@@ -95,3 +95,4 @@ geopy==2.4.1
 # Email (for notifications)
 emails==0.6
 aiosmtplib==3.0.1
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
